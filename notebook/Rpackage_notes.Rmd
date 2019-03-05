@@ -1,0 +1,329 @@
+---
+title: "Writing R packages in Rstudio"
+author: "Brad Duthie"
+date: "6 March 2019"
+output: 
+    html_document:
+        code_folding: show
+---
+
+Contents
+================================================================================
+
+********************************************************************************
+
+**Note: Please think of this document as a living document, which you are free to improve (like a [wiki](https://en.wikipedia.org/wiki/Wiki)) with minor edits, new sections that others might find useful, or [additional resources](#whatelse) that you find that you think others might also find useful. After reading through this, you will be able to write a basic R package, which can be installed from [GitHub](http://github.com).**
+
+********************************************************************************
+
+- [Introduction: What is an R package?](#intro)
+- [Packages that need to be installed](#install)
+- [The most basic R package](#basic)
+- [Making a new R project](#project)
+- [Adding documentation (help files)](#documentation)
+- [Additional resources](#whatelse)
+- [Uploading to and install from GitHub](#github)
+
+********************************************************************************
+
+<a name="intro">Introduction: What is an R package?</a>
+================================================================================
+
+Packages are bundles of code and data that can be written by anyone in the R community. R Packages can serve any number of uses, and range from well documented and widely used [statistical libraries](https://cran.r-project.org/package=vegan) to packages of functions that [tell knock-knock jokes](https://github.com/psolymos/KnockKnockJokes). If you have been using R for even a short length of time, you have probably needed to install and use the functions published in an R package. **In these notes, I will walk you through the basics of writing your own R package**. Even if you never intend to do this for your own code, I hope that this process will make you more familiar with the R packages that you use in your research, and how those packages are made. 
+
+A lot of R users are probably familiar with the [Comprehensive R Archive Network (CRAN)](https://cran.r-project.org/), a massive repository that currently holds over 13000 published R packages. Packages on CRAN are published for the R community and installed in RStudio using the function `install.packages`. But not every R package is or should be uploaded to CRAN. Packages can uploaded and downloaded from [GitHub](http://github.com), or even just built for personal use (some R users have their own personal R packages with documented functions that they have written and regularly use in their own research).
+
+Here I will walk through the process of writing a very simple R package, uploading it to GitHub, and downloading it from GitHub. Throughout these notes, I will present only the Rstudio version of package development, but package development can also be done using the command line (though there is really no reason to do this, as Rstudio makes the whole process much easier). There are some packages that need to be installed before we start developing.
+
+
+<a name="install">Packages that need to be installed</a>
+================================================================================
+
+Before getting started, we need to install the [`devtools`](https://cran.r-project.org/package=devtools) and [`roxygen2`](https://cran.r-project.org/package=roxygen2) packages. The former contains a large bundle of tools needed in package development, while the latter is used to easily write documentation.
+
+```{r, eval = FALSE}
+install.packages("devtools");
+install.packages("roxygen2");
+```
+
+It might be necessary to restart Rstudio after installing the above packages.
+
+
+<a name="basic">The most basic R package</a>
+================================================================================
+
+Assume that we want to create an R package that includes two functions. The first function will convert temperatures from degrees Fahrenheit to degrees Celsius, while the second function will convert temperatures from degrees Celsius to degrees Fahrenheit. The first thing we need to do is create a new folder somewhere on our computer that will hold the whole R package (there are other ways of doing this, but I am showing the way that I tend to use most often).
+
+<br><center>
+![](images/initialise_folder.png)
+</center><br>
+
+The above shows the new folder 'SCC_R_package'. For now, this folder is empty. The first thing that we need to do is to create a new folder inside of `SCC_R_package' called 'R'.
+
+<br><center>
+![](images/inside_R_package.png)
+</center><br>
+
+Inside this folder is where we will store the actual R scripts with the coded functions. Any number of '.R' files can be included in the folder, and each file can have any number of functions. You could, for example, give each function its own file, or just have one file with many R functions. For large projects, I find it easiest to group similar functions in the same R file. In our new R package, I will write both functions in the same file called 'temp_conversion.R', which has the code below.
+
+```{r}
+F_to_C <- function(F_temp){
+    C_temp <- (F_temp - 32) * 5/9;
+    return(C_temp);
+}
+
+C_to_F <- function(C_temp){
+    F_temp <- (C_temp * 9/5) + 32;
+    return(F_temp);
+}
+```
+
+That is the whole file for now; just nine lines of code.
+
+<br><center>
+![](images/temp_conversion.png)
+</center><br>
+
+The next thing that we need to do is create a new file called `DESCRIPTION` in the `SCC_R_package` directory (note, *not* in 'R', but just outside of it). This will be a plain text file with no extension, and it will hold some of the meta-data on the R package. For now, the whole file is just the following four lines of code, specifying the package name, type, title, and version number.
+
+```
+Package: SCCTempConverter
+Type: Package
+Title: Temperature Conversion Package for Demonstration
+Version: 0.0.1.0
+```
+
+If we really wanted to call it quits, this is technically an R package, albeit an extremely basic one. We could load it using the code above after first reading in the `devtools` library. 
+
+```{r, eval = FALSE}
+library(devtools);
+load_all("."); # Working directory should be in the package SCC_R_package
+```
+
+Note that the working directory needs to be set correctly to the R package directory (e.g., using the `setwd` function, or by choosing `Session > Set Working Directory` from the pull down menu of RStudio). In doing this, the above functions `F_to_C` and `C_to_F` are now read into R and we can use them to convert temperatures.
+
+```{r}
+F_to_C(79);
+```
+
+```{r}
+C_to_F(20);
+```
+
+This is not a good stopping point for writing a package though, because we really should include some sort of documentation explaining what the package is for and helping users know what functions do. 
+
+<a name="project">Making a new R project</a>
+================================================================================
+
+To get started on a proper R package complete with documentation, the best thing to do is to create a new R project. To do this in Rstudio, go to `File > New Project...`; the box below should pop up.
+
+<br><center>
+![](images/create_project.png)
+</center><br>
+
+Note that we could have started with a project right away, creating a new folder with the **New Directory** option. Instead, we will create the project in our **Existing Directory**, `SCC_R_package` by choosing the middle option. The following box should appear.
+
+<br><center>
+![](images/create_project_from.png)
+</center><br>
+
+The box above is asking for the local directory in which the project will be stored. Mine is shown above, but yours will be different depending on where `SCC_R_package` is stored. After clicking 'Create Project', you should be able to see the project inside the package directory.
+
+<br><center>
+![](images/project_created.png)
+</center><br>
+
+The R project is shown above as `SCC_R_package.Rproj`. Note that there are a couple other new things in the directory above, including `.Rproj.user` and `.Rbuildignore`. These are hidden files, so you might not see these in your own directory unless you explicitly ask your computer to show hidden files. The folder `.Rproj.user` is not really important; it stores some more meta-data about the package development. The file `.Rbuildignore` is not important for now, but could be useful later; this is just a plain text file that tells R to ignore selected files or folders when building the package (e.g., if we wanted to include a folder for our own purposes that is not needed or wanted for building the package). The interface in RStudio should now look something like the below.
+
+<br><center>
+![](images/project_interface.png)
+</center><br>
+
+The colours you use might vary, but you should see the 'SCC_R_package' in the upper right indicating the project name.
+
+<a name="documentation">Adding documentation (help files)</a>
+================================================================================
+
+If we want others to use the functions that we have written, we need to provide some documentation for them. Documentation shows up in the 'Help' tab of RStudio when running the function `help`. You can run the following code to see what I mean.
+
+```{r, eval = FALSE}
+help(lm);
+```
+
+Note that the code below does the same thing as the code above.
+
+```{r, eval = FALSE}
+?lm
+```
+
+You should see a tab pop up somewhere in Rstudio that reads a markdown file with a helpful explanation of the `lm` function in R.
+
+<br><center>
+![](images/help_md.png)
+</center><br>
+
+You can make one of these helpful markdown files in Rstudio using the `roxygen2` package. To do this, we need to add to the functions written in the `temp_conversion.R` file. The code below shows a simple example.
+
+```{r, eval = FALSE}
+#' Fahrenheit conversion
+#'
+#' Convert degrees Fahrenheit temperatures to degrees Celsius
+#' @param F_temp The temperature in degrees Fahrenheit
+#' @return The temperature in degrees Celsius
+#' @examples 
+#' temp1 <- F_to_C(50);
+#' temp2 <- F_to_C( c(50, 63, 23) );
+#' @export
+F_to_C <- function(F_temp){
+    C_temp <- (F_temp - 32) * 5/9;
+    return(C_temp);
+}
+
+#' Celsius conversion
+#'
+#' Convert degrees Celsius temperatures to degrees Fahrenheit
+#' @param C_temp The temperature in degrees Celsius
+#' @return The temperature in degrees Fahrenheit
+#' @examples 
+#' temp1 <- C_to_F(22);
+#' temp2 <- C_to_F( c(-2, 12, 23) );
+#' @export
+C_to_F <- function(C_temp){
+    F_temp <- (C_temp * 9/5) + 32;
+    return(F_temp);
+}
+```
+
+Note that the total length of the code has increased considerably to add in the documentation, but we now have some helpful reminders of how to use each function. The first line (e.g., `#' Fahrenheit conversion`) shows the function title, with the next line showing the description. Additional tags such as `@param` and `@examples` are used to write different subsections of the help file. These are not the only tags available; for more details about the Roxygen format, see [Karl Broman's page](http://kbroman.org/pkg_primer/pages/docs.html) or Hadley Wickham's [introduction to roxygen2](https://cran.r-project.org/web/packages/roxygen2/vignettes/roxygen2.html). Using the above format, the [roxygen2 package](https://cran.r-project.org/package=roxygen2) makes it easy to create help files in markdown. All that we need to do is make sure that the project is open and that the working directory is correct (typing `getwd()` should return the directory of our R package), then run the below in the console.
+
+```{r, eval = FALSE}
+library(roxygen2); # Read in the roxygen2 R package
+roxygenise();      # Builds the help files
+```
+
+Here is what our package directory looks like now.
+
+<br><center>
+![](images/roxygenised.png)
+</center><br>
+
+Note that two things have been added. The first is a new directory called 'man', which holds the help files that we have written. The second is a plain text file `NAMESPACE`, which works with R to integrate them into the package correctly; you do not need to edit `NAMESPACE` manually, in fact, the file itself tells you not to edit it. Here are the entire contents of `NAMESPACE`.
+
+```
+# Generated by roxygen2: do not edit by hand
+
+export(C_to_F)
+export(F_to_C)
+```
+
+Inside the 'man' folder, there are two new markdown documents, one for each function.
+
+<br><center>
+![](images/roxygenise_man_folder.png)
+</center><br>
+
+Both are plain text files. Here are the contents of `F_to_C.Rd`.
+
+```
+% Generated by roxygen2: do not edit by hand
+% Please edit documentation in R/temp_conversion.R
+\name{F_to_C}
+\alias{F_to_C}
+\title{Fahrenheit conversion}
+\usage{
+F_to_C(F_temp)
+}
+\arguments{
+\item{F_temp}{The temperature in degrees Fahrenheit}
+}
+\value{
+The temperature in degrees Celsius
+}
+\description{
+Convert degrees Fahrenheit temperatures to degrees Celsius
+}
+\examples{
+temp1 <- F_to_C(50);
+temp2 <- F_to_C( c(50, 63, 23) );
+}
+```
+
+We can load the package now and ask for help with `F_to_C`. 
+
+```{r, eval = FALSE}
+?F_to_C;
+```
+
+RStudio will present the below in the 'Help' tab.
+
+<br><center>
+![](images/F_to_C_help.png)
+</center><br>
+
+Now that we have the key functions and documentation, we can upload this to GitHub for the world to see and use. 
+
+<a name="github">Uploading to and install from GitHub</a>
+================================================================================
+
+Note that putting the R package on GitHub is not a requirement, but it is probably the easiest way to share your work. Before uploading the R package to GitHub, I will add one more folder to the repository. 
+
+<br><center>
+![](images/notebook.png)
+</center><br>
+
+I use the arbitrarily named 'notebook' folder to hold various files that I want to be available to me in development, but not actually present in the R package. I can make the R package ignore this in build by adding a single line of code to the '.Rbuildignore' file mentioned earlier. Below are the entire contents of the '.Rbuildignore' file.
+
+```
+^.*\.Rproj$
+^\.Rproj\.user$
+notebook*
+```
+
+The lines `^.*\.Rproj$` and `^\.Rproj\.user$` were already added automatically by RStudio. My added line `notebook*` tells R to ignore anything that follows 'notebook' in the directory. This would include anything in the folder 'notebook' (e.g., 'notebook/file1.txt'), but also any folder or file that starts out with these characters (e.g., 'notebook2/file1.txt' or 'notebook_stuff.txt'). I will now add these notes and all the images I have used to this folder.
+
+<br><center>
+![](images/notebook_inside.png)
+</center><br>
+
+With the notebook folder now added, I need to initialise a new GitHub repository (see [version control notes](https://stirlingcodingclub.github.io/version_control/vc_notes.html) for help).
+
+
+<!---
+
+
+At the minimal point, we can load the package for ourselves with the following.
+
+```{r, eval = FALSE}
+library(devtools);
+load_all(".");
+```
+
+Should install and use `roxygen2` package.
+
+```{r, eval = FALSE}
+install.packages("roxygen2");
+library(roxygen2);
+```
+
+
+When the stuff is added to the R functions, can roxygenise.
+
+```{r, eval = FALSE}
+roxygenise();
+```
+
+A line has been added to the `DESCRIPTION` file. New file and folder added.
+
+
+--->
+
+
+
+<a name="whatelse">Additional resources</a>
+================================================================================
+
+**From [Karl Broman](https://kbroman.org/)**
+
+- [The minimal R package](http://kbroman.org/pkg_primer/pages/minimal.html)
+- [Building and installing an R package](http://kbroman.org/pkg_primer/pages/build.html)
+- [Writing documentation with Roxygen2](http://kbroman.org/pkg_primer/pages/docs.html)
