@@ -285,8 +285,35 @@ The lines `^.*\.Rproj$` and `^\.Rproj\.user$` were already added automatically b
 ![](images/notebook_inside.png)
 </center><br>
 
-With the notebook folder now added, I need to initialise a new GitHub repository (see [version control notes](https://stirlingcodingclub.github.io/version_control/vc_notes.html) for help).
+With the notebook folder now added, I need to initialise a new GitHub repository (see [version control notes](https://stirlingcodingclub.github.io/version_control/vc_notes.html) for help). After doing this for Stirling Coding Club's organisation, here is what it looks like on GitHub.
 
+<br><center>
+![](images/GitHub.png)
+</center><br>
+
+The R package is now live. Anyone can download it by using the `install_github` function in the `devtools` package. To do so, type the below into the RStudio console.
+
+```{r, eval = FALSE}
+library(devtools) # Make sure that the devtools library is loaded
+install_github("StirlingCodingClub/SCC_R_package");
+```
+
+Our R package is now installed. We can start using it by reading it in as a normal package.
+
+```{r, eval = FALSE}
+library(SCCTempConverter);
+F_to_C(30);
+```
+
+```{r, echo = FALSE}
+F_to_C <- function(F_temp){
+    C_temp <- (F_temp - 32) * 5/9;
+    return(C_temp);
+}
+F_to_C(30);
+```
+
+That is it! We can share the [location of the R package](https://github.com/StirlingCodingClub/SCC_R_package) with colleagues who we think might make use of its R functions. If you want to you can stop here, but I will press on with a few more helpful tips and tricks in the next section.
 
 <!---
 
