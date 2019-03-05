@@ -21,8 +21,9 @@ Contents
 - [The most basic R package](#basic)
 - [Making a new R project](#project)
 - [Adding documentation (help files)](#documentation)
-- [Additional resources](#whatelse)
 - [Uploading to and install from GitHub](#github)
+- [Other useful things to know](#morestuff)
+- [Additional resources](#whatelse)
 
 ********************************************************************************
 
@@ -262,7 +263,7 @@ RStudio will present the below in the 'Help' tab.
 
 Now that we have the key functions and documentation, we can upload this to GitHub for the world to see and use. 
 
-<a name="github">Uploading to and install from GitHub</a>
+<a name="github">Uploading to and installing from GitHub</a>
 ================================================================================
 
 Note that putting the R package on GitHub is not a requirement, but it is probably the easiest way to share your work. Before uploading the R package to GitHub, I will add one more folder to the repository. 
@@ -315,34 +316,33 @@ F_to_C(30);
 
 That is it! We can share the [location of the R package](https://github.com/StirlingCodingClub/SCC_R_package) with colleagues who we think might make use of its R functions. If you want to you can stop here, but I will press on with a few more helpful tips and tricks in the next section.
 
-<!---
+<a name="morestuff">Other userful things to know</a>
+================================================================================
+
+**Additional subdirectories**
+
+The subdirectories (i.e., folders) that I have walked you through are not the only ones that are useful to include in an R package. Here, for example, is what the directory of the [GMSE R package](https://github.com/ConFooBio/gmse) looks like.
 
 
-At the minimal point, we can load the package for ourselves with the following.
+![](images/gmse.png)
 
-```{r, eval = FALSE}
-library(devtools);
-load_all(".");
-```
+There is a lot of extra stuff here, but the following are what each folder contains:
 
-Should install and use `roxygen2` package.
+- **data** contains any and all data files provided in the R package. These files are saved in the `.rda` format (e.g., using `save()` in R), and can be loaded using `data` when a package is read into R (e.g., `data(cars)` in base R).
+- **docs** includes documents for the [GMSE website](https://confoobio.github.io/gmse/), which was produced in less than 20 minutes using the extremely helpful [pkgdown](https://pkgdown.r-lib.org/) R package (I highly recommend this for building website for your R package).
+- **src** contains compiled code that is used by your R functions. This could include code written in C or C++ to speed up computations. In some packages, most of the code is actually in this folder.
+- **tests** includes files to test your code to ensure that it is running properly throughout the development process. This folder can be created using the [testthat](https://cran.r-project.org/package=testthat) R package. For large projects, especially, this is extremely useful because it allows you to quickly test to make sure that all of the functions that you write return the output that you expect of them.
+- **vignettes** includes larger documentation files for your code -- more like a package guide than a simple help file for package functions. [Here is an example](https://confoobio.github.io/gmse/articles/SI1.html) from GMSE.
 
-```{r, eval = FALSE}
-install.packages("roxygen2");
-library(roxygen2);
-```
+One more folder that could be useful but is not in the GMSE R package above is the following:
 
+- **inst** allows you to [add arbitrary files to the R install](http://r-pkgs.had.co.nz/inst.html). This acts as a sort of reverse '.Rbuildignore', in that it tells R to incorporate something specific into the R build process.
 
-When the stuff is added to the R functions, can roxygenise.
+**Building a source package**
 
-```{r, eval = FALSE}
-roxygenise();
-```
+We can build a source package (i.e., a zipped version of the R package) in Rstudio by selecting `Build > Build Source Package`. This will create a zipped package outside of the package directory, which would be what we would need to build if we wanted to submit our package to CRAN.
 
-A line has been added to the `DESCRIPTION` file. New file and folder added.
-
-
---->
+![](images/source.png)
 
 
 
