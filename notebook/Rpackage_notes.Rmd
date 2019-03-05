@@ -21,7 +21,7 @@ Contents
 - [The most basic R package](#basic)
 - [Making a new R project](#project)
 - [Adding documentation (help files)](#documentation)
-- [Uploading to and install from GitHub](#github)
+- [Uploading to and installing from GitHub](#github)
 - [Other useful things to know](#morestuff)
 - [Additional resources](#whatelse)
 
