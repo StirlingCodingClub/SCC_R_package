@@ -323,8 +323,9 @@ That is it! We can share the [location of the R package](https://github.com/Stir
 
 The subdirectories (i.e., folders) that I have walked you through are not the only ones that are useful to include in an R package. Here, for example, is what the directory of the [GMSE R package](https://github.com/ConFooBio/gmse) looks like.
 
-
+<br><center>
 ![](images/gmse.png)
+</center><br>
 
 There is a lot of extra stuff here, but the following are what each folder contains:
 
@@ -342,8 +343,38 @@ One more folder that could be useful but is not in the GMSE R package above is t
 
 We can build a source package (i.e., a zipped version of the R package) in Rstudio by selecting `Build > Build Source Package`. This will create a zipped package outside of the package directory, which would be what we would need to build if we wanted to submit our package to CRAN.
 
+<br><center>
 ![](images/source.png)
+</center><br>
 
+**Tagging a version**
+
+It is sometimes helpful to 'tag' a particular commit in git to identify a particular version or 'release' of your R package (e.g., [in GMSE](https://github.com/ConFooBio/gmse/releases)). I did not go into detail about using git tags in the [version control](https://stirlingcodingclub.github.io/version_control/vc_notes.html) session, but the general idea is that a tag is essentially a commit that has a meaningful name rather than a large number -- the tag is therefore a snapshot of a particular point in the history of the repository that is of particular interest. In the command line, a commit works as below.
+
+```
+git tag -a v0.0.1.0 -m "my first version of SCC_R_package"
+git push -u origin v0.0.1.0
+```
+
+Note that the BASH code above would create the tag 'v0.0.1.0' with the quoted message in the first line. In the second line, it would push the tag to GitHub. We can do the same thing in [GitKraken](https://www.gitkraken.com/) with a more friendly graphical user interface.
+
+<br><center>
+![](images/tag.png)
+</center><br>
+
+To tag any commit, right click on the commit and select 'Create tag here'. This allows you to name the commit, and the name will show up on the left hand side in GitKraken.
+
+<br><center>
+![](images/tag2.png)
+</center><br>
+
+See the 'SCCTempConverter.v0.0.1.0' tag on the left. To push this tag to GitHub, right click on this tag and select 'Push SCCTempConverter.v0.0.1.0 to origin'. We can now see that there is one release in the GitHub repository.
+
+<br><center>
+![](images/release.png)
+</center><br>
+
+If we click on this, we would see the version we tagged.
 
 
 <a name="whatelse">Additional resources</a>
@@ -354,3 +385,7 @@ We can build a source package (i.e., a zipped version of the R package) in Rstud
 - [The minimal R package](http://kbroman.org/pkg_primer/pages/minimal.html)
 - [Building and installing an R package](http://kbroman.org/pkg_primer/pages/build.html)
 - [Writing documentation with Roxygen2](http://kbroman.org/pkg_primer/pages/docs.html)
+
+**From RStudio**
+
+- [R packages](http://r-pkgs.had.co.nz/) (free online book)
