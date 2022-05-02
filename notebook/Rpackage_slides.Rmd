@@ -2,7 +2,7 @@
 title: "Writing R packages in Rstudio"
 subtitle: https://stirlingcodingclub.github.io/SCC_R_package/notebook/Rpackage_notes.html
 author: "Brad Duthie"
-date: "6 March 2019"
+date: "4 May 2022"
 output:
   beamer_presentation:
     theme: "default"

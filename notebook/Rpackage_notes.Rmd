@@ -1,7 +1,7 @@
 ---
 title: "Writing R packages in Rstudio"
 author: "Brad Duthie"
-date: "6 March 2019"
+date: "4 May 2022"
 output: 
     html_document:
         code_folding: show
